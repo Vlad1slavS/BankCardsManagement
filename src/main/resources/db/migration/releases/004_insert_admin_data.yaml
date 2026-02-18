@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-insert-admin-data
+      author: Vladislav Stepanov
+      comment: Вставка админ данных в таблицу
+
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  value: d0e92bfe-9534-4129-af28-0f52d124434e
+
+              - column:
+                  name: username
+                  value: admin
+
+              - column:
+                  name: email
+                  value: admin@admin.com
+
+              - column:
+                  name: password
+                  value: $2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+
+              - column:
+                  name: role
+                  value: ADMIN
+
+      rollback:
+        - delete:
+            tableName: users
+            where: username = 'admin'
