@@ -22,7 +22,7 @@ databaseChangeLog:
 
               - column:
                   name: password
-                  value: $2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+                  value: $argon2id$v=19$m=65536,t=3,p=1$zyeOkyob4jzMdlPJX3L2zw$nw2YqnqZQdHAvs7CkFKjtVZsR6UFpbM0QyOXdpAFGFY
 
               - column:
                   name: role

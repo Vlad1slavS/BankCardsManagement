@@ -7,6 +7,14 @@ spring:
     username: ${DB_USER:postgres}
     password: ${DB_PASSWORD:postgres}
 
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+
   liquibase:
     change-log: classpath:db/migration/db.changelog-master.yaml
 
