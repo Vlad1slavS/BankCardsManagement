@@ -7,7 +7,6 @@ import com.example.bankcards.enums.CardStatus;
 import com.example.bankcards.exception.AccessDeniedException;
 import com.example.bankcards.exception.CardOperationException;
 import com.example.bankcards.exception.ResourceNotFoundException;
-import com.example.bankcards.mapping.CardMapper;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.specification.CardSpecification;
@@ -28,7 +27,6 @@ public class CardService {
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
     private final CardEncryptionUtil cardEncryptionUtil;
-    private final CardMapper cardMapper;
 
     @Transactional
     public Card createCard(CreateCardRequest request) {
