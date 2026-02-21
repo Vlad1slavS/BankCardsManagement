@@ -8,7 +8,6 @@ RUN mvn clean package -DskipTests
 FROM --platform=linux/arm64 eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
-# Создаём пользователя
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
 COPY --from=builder /app/target/*.jar app.jar
