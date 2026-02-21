@@ -33,6 +33,7 @@
         <swagger.version>3.0.1</swagger.version>
         <jjwt.version>0.12.7</jjwt.version>
         <bouncycastle.version>1.83</bouncycastle.version>
+        <tomcat.version>11.0.18</tomcat.version>
     </properties>
     <dependencies>
         <dependency>
