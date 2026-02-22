@@ -87,7 +87,7 @@ public class CardController {
     }
 
     @GetMapping("/myCards")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PageResponseDto<CardResponse>> getMyCards(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(required = false) CardStatus status,
@@ -104,7 +104,7 @@ public class CardController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CardResponse> getCard(
             @PathVariable UUID id,
             @AuthenticationPrincipal UserPrincipal principal
@@ -122,7 +122,7 @@ public class CardController {
     }
 
     @PostMapping("/transfer")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<TransferResponse> transfer(
             @Valid @RequestBody TransferRequest request,
             @AuthenticationPrincipal UserPrincipal principal

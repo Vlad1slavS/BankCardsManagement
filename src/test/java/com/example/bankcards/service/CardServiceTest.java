@@ -50,7 +50,7 @@ class CardServiceTest {
 
     @Mock
     private CardEncryptionUtil cardEncryptionUtil;
-    
+
     @Mock
     private CardMapper cardMapper;
 
@@ -183,7 +183,7 @@ class CardServiceTest {
         when(cardRepository.findById(cardId)).thenReturn(Optional.of(activeCard));
 
         assertDoesNotThrow(() -> cardService.deleteCard(cardId));
-        verify(cardRepository).delete(activeCard);
+        verify(cardRepository, never()).delete(activeCard);
     }
 
     @Test

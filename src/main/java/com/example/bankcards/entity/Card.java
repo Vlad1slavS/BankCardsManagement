@@ -41,20 +41,20 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "encrypted_number", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String encryptedNumber;
 
-    @Column(name = "masked_number", nullable = false)
+    @Column(nullable = false)
     private String maskedNumber;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
-    @Column(name = "holder_name", nullable = false)
+    @Column(nullable = false)
     private String holderName;
 
-    @Column(name = "expiry_date", nullable = false)
+    @Column(nullable = false)
     private LocalDate expiryDate;
 
     @Enumerated(EnumType.STRING)
@@ -71,5 +71,7 @@ public class Card {
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    private LocalDateTime deletedAt;
 
 }

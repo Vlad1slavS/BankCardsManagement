@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-add-column-for-soft-delete-users-cards-table
+      author: Vladislav Stepanov
+      comment: Вставка колонки для "мягкого" удаления пользователя
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: deleted_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 006-add-column-for-soft-delete-cards-table
+      author: Vladislav Stepanov
+      comment: Вставка колонки для "мягкого" удаления карты
+      changes:
+        - addColumn:
+            tableName: cards
+            columns:
+              - column:
+                  name: deleted_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true

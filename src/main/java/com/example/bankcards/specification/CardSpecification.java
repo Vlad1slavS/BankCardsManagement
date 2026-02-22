@@ -21,7 +21,9 @@ public final class CardSpecification {
      *
      * @return - Specification с нужными фильтрами
      */
-    public static Specification<Card> byFilter(UUID ownerId, CardStatus status, String holderName) {
+    private static Specification<Card> byFilter(UUID ownerId, CardStatus status,
+                                                String holderName,
+                                                boolean includeDeleted) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -35,8 +37,19 @@ public final class CardSpecification {
                 predicates.add(cb.like(cb.lower(root.get("holderName")),
                         "%" + holderName.toLowerCase() + "%"));
             }
+            if (!includeDeleted) {
+                predicates.add(cb.isNull(root.get("deletedAt")));
+            }
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    public static Specification<Card> byFilter(UUID ownerId, CardStatus status, String holderName) {
+        return byFilter(ownerId, status, holderName, false);
+    }
+
+    public static Specification<Card> byFilterAdmin(UUID ownerId, CardStatus status, String holderName) {
+        return byFilter(ownerId, status, holderName, true);
     }
 }

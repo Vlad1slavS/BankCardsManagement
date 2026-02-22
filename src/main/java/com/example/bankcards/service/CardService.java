@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -52,7 +53,7 @@ public class CardService {
 
     @Transactional(readOnly = true)
     public Page<Card> getAllCards(CardStatus status, String holderName, Pageable pageable) {
-        Specification<Card> spec = CardSpecification.byFilter(null, status, holderName);
+        Specification<Card> spec = CardSpecification.byFilterAdmin(null, status, holderName);
         return cardRepository.findAll(spec, pageable);
     }
 
@@ -85,7 +86,8 @@ public class CardService {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Карта с id: " + cardId + " не найдена"));
-        cardRepository.delete(card);
+
+        card.setDeletedAt(LocalDateTime.now());
     }
 
     @Transactional(readOnly = true)
