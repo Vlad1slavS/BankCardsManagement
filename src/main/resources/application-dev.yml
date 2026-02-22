@@ -15,6 +15,7 @@ spring:
         highlight_sql: true
         use_sql_comments: true
 
+  # На проде лучше всего отключать авто-миграции и запускать их руками
   liquibase:
     change-log: classpath:db/migration/db.changelog-master.yaml
 
@@ -31,7 +32,6 @@ logging:
   level:
     com.bankcard: DEBUG
     org.springframework.security: INFO
-    org.hibernate.orm.jdbc.bind: TRACE
 
 app:
   encryption:

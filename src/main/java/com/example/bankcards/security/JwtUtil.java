@@ -3,6 +3,7 @@ package com.example.bankcards.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +32,7 @@ public class JwtUtil {
             @Value("${app.jwt.secret}") String secret,
             @Value("${app.jwt.expiration}") long expirationMs
     ) {
-        this.signingKey = Keys.hmacShaKeyFor(hexStringToByteArray(secret));
+        this.signingKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
         this.expirationMs = expirationMs;
     }
 

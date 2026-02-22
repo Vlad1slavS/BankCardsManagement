@@ -10,7 +10,6 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
 
@@ -99,13 +98,8 @@ public class CardEncryptionUtil {
         return "**** **** **** " + last4;
     }
 
-    private SecretKey deriveKey(String rawKey) {
-        try {
-            MessageDigest sha = MessageDigest.getInstance("SHA-256");
-            byte[] keyBytes = sha.digest(rawKey.getBytes(StandardCharsets.UTF_8));
-            return new SecretKeySpec(keyBytes, "AES");
-        } catch (Exception e) {
-            throw new IllegalStateException("Не удалось получить ключ шифрования", e);
-        }
+    private SecretKey deriveKey(String base64Key) {
+        byte[] decoded = Base64.getDecoder().decode(base64Key);
+        return new SecretKeySpec(decoded, "AES");
     }
 }
