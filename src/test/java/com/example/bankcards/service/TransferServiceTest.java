@@ -56,8 +56,8 @@ class TransferServiceTest {
     @BeforeEach
     void setUp() {
         userId = UUID.randomUUID();
-        fromCardId = UUID.randomUUID();
-        toCardId = UUID.randomUUID();
+        fromCardId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        toCardId = UUID.fromString("00000000-0000-0000-0000-000000000002");
 
         User owner = User.builder()
                 .id(userId)
@@ -92,8 +92,8 @@ class TransferServiceTest {
         Transfer savedTransfer = Transfer.builder()
                 .fromCard(fromCard).toCard(toCard).amount(BigDecimal.valueOf(1000)).build();
 
-        when(cardRepository.findById(fromCardId)).thenReturn(Optional.of(fromCard));
-        when(cardRepository.findById(toCardId)).thenReturn(Optional.of(toCard));
+        when(cardRepository.findByIdWithLock(fromCardId)).thenReturn(Optional.of(fromCard));
+        when(cardRepository.findByIdWithLock(toCardId)).thenReturn(Optional.of(toCard));
         when(transferRepository.save(any())).thenReturn(savedTransfer);
 
         Transfer result = transferService.transfer(request, userId);
@@ -114,7 +114,7 @@ class TransferServiceTest {
 
     @Test
     void transfer_fromCardNotFound_throwsResourceNotFoundException() {
-        when(cardRepository.findById(fromCardId)).thenReturn(Optional.empty());
+        when(cardRepository.findByIdWithLock(fromCardId)).thenReturn(Optional.empty());
 
         TransferRequest request = new TransferRequest(fromCardId, toCardId, BigDecimal.valueOf(100));
 
@@ -123,8 +123,8 @@ class TransferServiceTest {
 
     @Test
     void transfer_toCardNotFound_throwsResourceNotFoundException() {
-        when(cardRepository.findById(fromCardId)).thenReturn(Optional.of(fromCard));
-        when(cardRepository.findById(toCardId)).thenReturn(Optional.empty());
+        when(cardRepository.findByIdWithLock(fromCardId)).thenReturn(Optional.of(fromCard));
+        when(cardRepository.findByIdWithLock(toCardId)).thenReturn(Optional.empty());
 
         TransferRequest request = new TransferRequest(fromCardId, toCardId, BigDecimal.valueOf(100));
 
@@ -137,8 +137,8 @@ class TransferServiceTest {
         Card otherCard = Card.builder().id(fromCardId).owner(otherUser)
                 .status(CardStatus.ACTIVE).balance(BigDecimal.valueOf(5000)).build();
 
-        when(cardRepository.findById(fromCardId)).thenReturn(Optional.of(otherCard));
-        when(cardRepository.findById(toCardId)).thenReturn(Optional.of(toCard));
+        when(cardRepository.findByIdWithLock(fromCardId)).thenReturn(Optional.of(otherCard));
+        when(cardRepository.findByIdWithLock(toCardId)).thenReturn(Optional.of(toCard));
 
         TransferRequest request = new TransferRequest(fromCardId, toCardId, BigDecimal.valueOf(100));
 
@@ -151,8 +151,8 @@ class TransferServiceTest {
         Card otherCard = Card.builder().id(toCardId).owner(otherUser)
                 .status(CardStatus.ACTIVE).balance(BigDecimal.valueOf(1000)).build();
 
-        when(cardRepository.findById(fromCardId)).thenReturn(Optional.of(fromCard));
-        when(cardRepository.findById(toCardId)).thenReturn(Optional.of(otherCard));
+        when(cardRepository.findByIdWithLock(fromCardId)).thenReturn(Optional.of(fromCard));
+        when(cardRepository.findByIdWithLock(toCardId)).thenReturn(Optional.of(otherCard));
 
         TransferRequest request = new TransferRequest(fromCardId, toCardId, BigDecimal.valueOf(100));
 
@@ -162,8 +162,8 @@ class TransferServiceTest {
     @Test
     void transfer_fromCardBlocked_throwsCardOperationException() {
         fromCard.setStatus(CardStatus.BLOCKED);
-        when(cardRepository.findById(fromCardId)).thenReturn(Optional.of(fromCard));
-        when(cardRepository.findById(toCardId)).thenReturn(Optional.of(toCard));
+        when(cardRepository.findByIdWithLock(fromCardId)).thenReturn(Optional.of(fromCard));
+        when(cardRepository.findByIdWithLock(toCardId)).thenReturn(Optional.of(toCard));
 
         TransferRequest request = new TransferRequest(fromCardId, toCardId, BigDecimal.valueOf(100));
 
@@ -173,8 +173,8 @@ class TransferServiceTest {
     @Test
     void transfer_toCardExpired_throwsCardOperationException() {
         toCard.setStatus(CardStatus.EXPIRED);
-        when(cardRepository.findById(fromCardId)).thenReturn(Optional.of(fromCard));
-        when(cardRepository.findById(toCardId)).thenReturn(Optional.of(toCard));
+        when(cardRepository.findByIdWithLock(fromCardId)).thenReturn(Optional.of(fromCard));
+        when(cardRepository.findByIdWithLock(toCardId)).thenReturn(Optional.of(toCard));
 
         TransferRequest request = new TransferRequest(fromCardId, toCardId, BigDecimal.valueOf(100));
 
@@ -183,8 +183,8 @@ class TransferServiceTest {
 
     @Test
     void transfer_insufficientFunds_throwsInsufficientFundsException() {
-        when(cardRepository.findById(fromCardId)).thenReturn(Optional.of(fromCard));
-        when(cardRepository.findById(toCardId)).thenReturn(Optional.of(toCard));
+        when(cardRepository.findByIdWithLock(fromCardId)).thenReturn(Optional.of(fromCard));
+        when(cardRepository.findByIdWithLock(toCardId)).thenReturn(Optional.of(toCard));
 
         TransferRequest request = new TransferRequest(fromCardId, toCardId, BigDecimal.valueOf(99999));
 
@@ -194,8 +194,8 @@ class TransferServiceTest {
 
     @Test
     void transfer_exactBalance_success() {
-        when(cardRepository.findById(fromCardId)).thenReturn(Optional.of(fromCard));
-        when(cardRepository.findById(toCardId)).thenReturn(Optional.of(toCard));
+        when(cardRepository.findByIdWithLock(fromCardId)).thenReturn(Optional.of(fromCard));
+        when(cardRepository.findByIdWithLock(toCardId)).thenReturn(Optional.of(toCard));
         when(transferRepository.save(any())).thenReturn(mock(Transfer.class));
 
         TransferRequest request = new TransferRequest(fromCardId, toCardId, BigDecimal.valueOf(5000));
