@@ -12,7 +12,6 @@ import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.TransferRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
@@ -24,19 +23,23 @@ public class TransferService {
     private final CardRepository cardRepository;
     private final TransferRepository transferRepository;
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional
     public Transfer transfer(TransferRequest request, UUID currentUserId) {
         if (request.fromCardId().equals(request.toCardId())) {
             throw new CardOperationException("Нельзя выполнить перевод на ту же карту");
         }
 
-        Card fromCard = cardRepository.findById(request.fromCardId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Карта отправителя с id: " + request.fromCardId() + " не найдена"));
+        boolean fromIsFirst = request.fromCardId().compareTo(request.toCardId()) < 0;
+        UUID firstId = fromIsFirst ? request.fromCardId() : request.toCardId();
+        UUID secondId = fromIsFirst ? request.toCardId() : request.fromCardId();
 
-        Card toCard = cardRepository.findById(request.toCardId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Карта получателя с id: " + request.toCardId() + " не найдена"));
+        Card first = cardRepository.findByIdWithLock(firstId)
+                .orElseThrow(() -> new ResourceNotFoundException("Карта с id: " + firstId + " не найдена"));
+        Card second = cardRepository.findByIdWithLock(secondId)
+                .orElseThrow(() -> new ResourceNotFoundException("Карта с id: " + secondId + " не найдена"));
+
+        Card fromCard = fromIsFirst ? first : second;
+        Card toCard = fromIsFirst ? second : first;
 
         if (!fromCard.getOwner().getId().equals(currentUserId)) {
             throw new AccessDeniedException("Карта отправителя вам не принадлежит");
